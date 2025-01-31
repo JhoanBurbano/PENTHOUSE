@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  @apply bg-background text-gray-900 font-sans;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  @apply text-primary hover:underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    @apply text-2xl md:text-4xl font-serif;
+}
+
+.letter-spacing-sm {
+    letter-spacing: .25ch;
+}
+
+.letter-spacing-md {
+    letter-spacing: .5ch;
+}
+
+.letter-spacing-lg {
+    letter-spacing: 1ch;
+}
