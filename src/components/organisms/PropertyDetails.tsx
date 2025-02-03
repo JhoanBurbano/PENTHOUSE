@@ -11,11 +11,11 @@ import {
   RulerIcon,
 } from "hugeicons-react";
 import IconLabel from "../atoms/IconLabel";
-// import CardImage from "../atoms/CardImage";
 import Button from "../atoms/Button";
 import Badge from "../atoms/Badge";
 import ContactForm from "../molecules/ContactForm";
 import CardImage from "../atoms/CardImage";
+import TraceCard from "../atoms/TraceCard";
 
 interface Props {
   property: Property | null;
@@ -38,16 +38,21 @@ const PropertyDetails = ({ property, open, onClose }: Props) => {
           />
         </figure>
         <div className="relative">
-            <Price amount={property.price}  className="justify-start md:hidden" />
-            <Badge text={property.year.toString()} className="absolute top-0 right-0 md:hidden" />
+          <Price amount={property.price} className="justify-start md:hidden" />
+          <Badge
+            text={property.year.toString()}
+            className="absolute top-0 right-0 md:hidden"
+          />
           <span className="flex items-start gap-1">
             {/* <Location01Icon size={20} className="mt-1" /> */}
             <h1 className="text-[17px] leading-5 md:text-2xl font-serif uppercase ">
               {property.address.addressText}
             </h1>
           </span>
-            <Price amount={property.price} className="hidden md:flex" />
-          <p className="font-medium text-gray-600 text-sm md:text-md">{property.name}</p>
+          <Price amount={property.price} className="hidden md:flex" />
+          <p className="font-medium text-gray-600 text-sm md:text-md">
+            {property.name}
+          </p>
         </div>
         <ParagraphExpandable
           text="Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolores
@@ -88,17 +93,32 @@ const PropertyDetails = ({ property, open, onClose }: Props) => {
           </div>
         </div>
         <hr />
-        {
-          !showForm && (
-            <>
-            <h2>Seller information</h2>
-            <div>
-              <CardImage title={property?.owner?.name} subtitle={property?.owner?.email_address} image={property?.owner?.photo} />
+        {property.traces && property.traces.length > 0 && (
+          <>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <h2>Property traces</h2>
+                {property.traces.map((trace, index) => (
+                  <TraceCard key={index} trace={trace} />
+                ))}
+              </div>
             </div>
             <hr />
-            </>
-          )
-        }
+          </>
+        )}
+        {!showForm && (
+          <>
+            <h2>Seller information</h2>
+            <div>
+              <CardImage
+                title={property?.owner?.name}
+                subtitle={property?.owner?.email_address}
+                image={property?.owner?.photo}
+              />
+            </div>
+            <hr />
+          </>
+        )}
         {!showForm && (
           <Button
             label="Contact the seller"
@@ -106,15 +126,21 @@ const PropertyDetails = ({ property, open, onClose }: Props) => {
           />
         )}
         {showForm && (
-          <ContactForm onSubmit={() => setShowForm(false)} topChildren={
-            <CardImage title={property?.owner?.name} subtitle={property?.owner?.email_address} image={property.owner?.photo} />
-
-          } />
+          <ContactForm
+            onSubmit={() => setShowForm(false)}
+            topChildren={
+              <CardImage
+                title={property?.owner?.name}
+                subtitle={property?.owner?.email_address}
+                image={property.owner?.photo}
+              />
+            }
+          />
         )}
       </article>
     );
   };
-  if(!property) return null;
+  if (!property) return null;
   return (
     <Modal open={open} onClose={onClose} title="Property details">
       {__renderContent()}

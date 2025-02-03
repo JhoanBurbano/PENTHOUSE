@@ -1,3 +1,4 @@
+import { formatPrice } from '@/utils/formatters';
 import { Coins01Icon, Dollar01Icon } from 'hugeicons-react';
 import React, { memo } from 'react';
 
@@ -6,13 +7,10 @@ interface PriceProps {
   className?: string;
 }
 
-const formatToMillions = (amount: number): string => {
-  const millions = (amount / 1000000).toFixed(1).replace('.', ',');
-  return `${millions}M`;
-};
+
 
 const Price = memo(({ amount, className = '' }: PriceProps) => {
-  const formattedPrice = formatToMillions(amount);
+  const formattedPrice = formatPrice(amount);
 
   return (
     <article className={`flex items-center gap-1 font-bold text-black ${className}`} data-testid="price-component">

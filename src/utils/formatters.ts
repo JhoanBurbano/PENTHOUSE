@@ -1,12 +1,10 @@
+import dayjs from 'dayjs';
+
 export const formatPrice = (price: number): string => {
-  const slashedPrice = price / 1000000;
-  const formattedPrice = slashedPrice.toFixed(1);
-  return `${formattedPrice}M`;
+  const millions = (price / 1000000).toFixed(1).replace('.', ',');
+  return `${millions}M`;
 };
 
-export const formatDate = (date: Date): string => {
-  return new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(
-    -Math.round((Date.now() - date.getTime()) / (1000 * 60)),
-    'minutes'
-  );
+export const formatDate = (date: string): string => {
+  return dayjs(date).format('MMMM YYYY');
 };

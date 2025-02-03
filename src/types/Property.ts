@@ -27,6 +27,6 @@ export interface Traces {
   id: string;
   name: string;
   tax: number;
-  date: string;
+  dateSale: string;
   value: number;
 }
