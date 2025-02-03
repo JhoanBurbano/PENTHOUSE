@@ -187,9 +187,9 @@ const PropertyOwner: React.FC<{ owner: PropertyCardProps["cardOwner"] }> = ({ ow
     transition={{ delay: 0.7 }}
   >
     <CardImage
-      title={owner?.name || ""}
-      subtitle={owner?.address || ""}
-      image={owner?.photo || ""}
+      title={owner?.name}
+      subtitle={owner?.address}
+      image={owner?.photo}
     />
   </motion.div>
 );

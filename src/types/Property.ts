@@ -1,3 +1,5 @@
+import { Owner } from "./Owner";
+
 export interface Property {
   id: string;
   name: string;
@@ -6,11 +8,7 @@ export interface Property {
     addressText: string;
     location: string[];
   };
-  owner: {
-    name: string;
-    email_address: string;
-    photo: string;
-  };
+  owner: Owner;
   image: string;
   images: string[];
   year: number;

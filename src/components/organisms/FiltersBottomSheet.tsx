@@ -1,10 +1,15 @@
-'use client';
+"use client";
 
-import { ArrowUp01Icon, Cancel01Icon, MapPinIcon, SortingZA01Icon } from 'hugeicons-react';
-import React, { useState, useEffect } from 'react';
-import { Option, QuerySearchProperties } from '@/types/Filters';
-import { cities, sortOptions, priceRanges } from '@/constants/filters';
-import Button from '../atoms/Button';
+import {
+  ArrowUp01Icon,
+  Cancel01Icon,
+  MapPinIcon,
+  SortingZA01Icon,
+} from "hugeicons-react";
+import React, { useState, useEffect } from "react";
+import { Option, QuerySearchProperties } from "@/types/Filters";
+import { cities, sortOptions, priceRanges } from "@/constants/filters";
+import Button from "../atoms/Button";
 
 interface FiltersBottomSheetProps {
   onApplyFilters?: (query?: QuerySearchProperties) => void;
@@ -19,22 +24,22 @@ function FiltersBottomSheet({ onApplyFilters }: FiltersBottomSheetProps) {
   // Handle body scroll lock
   useEffect(() => {
     if (showFilters) {
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      document.body.style.height = '100%';
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+      document.body.style.height = "100%";
     } else {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.height = '';
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.height = "";
     }
 
     return () => {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.height = '';
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.height = "";
     };
   }, [showFilters]);
 
@@ -47,7 +52,9 @@ function FiltersBottomSheet({ onApplyFilters }: FiltersBottomSheetProps) {
     const filters = {
       city,
       sort,
-      ...(priceRange?.min !== undefined && priceRange?.max !== undefined ? { priceRange } : {}),
+      ...(priceRange?.min !== undefined && priceRange?.max !== undefined
+        ? { priceRange }
+        : {}),
     };
 
     /* interface QuerySearchProperties {
@@ -79,6 +86,7 @@ function FiltersBottomSheet({ onApplyFilters }: FiltersBottomSheetProps) {
         className={`md:hidden fixed mx-auto bottom-0 left-1/2 -translate-x-1/2 z-30 bg-accent min-w-32 rounded-t-2xl p-2 pb-0 flex flex-col items-center justify-start transition-all duration-700 ${
           showFilters ? "opacity-0" : "opacity-100"
         }`}
+        data-testid="Show filters"
       >
         <ArrowUp01Icon size={15} className="animate-bounce m-0 p-0" />
         <p className="text-xs font-bold p-0 m-0">Show filters</p>
@@ -92,13 +100,17 @@ function FiltersBottomSheet({ onApplyFilters }: FiltersBottomSheetProps) {
           <span className="w-12 h-1.5 bg-gray-700 rounded-full mx-auto mb-4 block" />
           <button
             onClick={toggleShowFilters}
+            data-testid="Close menu"
             className="absolute top-1 right-1 z-[999] w-14 h-14 rounded-full flex items-center justify-center"
           >
             <Cancel01Icon size={20} className="text-white" />
           </button>
           <article className="flex flex-col gap-4 text-gray-50 pb-24">
             <header className="mb-2 sticky top-0 bg-black/90 backdrop-blur-sm py-2 -mt-2 -mx-4 px-4">
-              <h1 className="text-2xl font-bold uppercase text-center letter-spacing-sm">
+              <h1
+                className="text-2xl font-bold uppercase text-center letter-spacing-sm"
+                data-testid="Filters title"
+              >
                 Filters
               </h1>
               <hr className="my-3 opacity-20" />
@@ -114,11 +126,17 @@ function FiltersBottomSheet({ onApplyFilters }: FiltersBottomSheetProps) {
                 {cities.map((cityOption) => (
                   <button
                     key={cityOption.value}
-                    onClick={() => setCity(city?.value === cityOption.value ? undefined : cityOption)}
+                    onClick={() =>
+                      setCity(
+                        city?.value === cityOption.value
+                          ? undefined
+                          : cityOption
+                      )
+                    }
                     className={`py-2 px-3 rounded-lg text-xs font-medium transition-all ${
                       city?.value === cityOption.value
-                        ? 'bg-primary text-black'
-                        : 'bg-gray-800/50 hover:bg-gray-700'
+                        ? "bg-primary text-black"
+                        : "bg-gray-800/50 hover:bg-gray-700"
                     }`}
                   >
                     {cityOption.label}
@@ -141,11 +159,12 @@ function FiltersBottomSheet({ onApplyFilters }: FiltersBottomSheetProps) {
                 {priceRanges.steps.map((step) => {
                   const isMin = priceRange?.min === step;
                   const isMax = priceRange?.max === step;
-                  const isInRange = priceRange?.min !== undefined && 
-                    priceRange?.max !== undefined && 
-                    step > priceRange.min && 
+                  const isInRange =
+                    priceRange?.min !== undefined &&
+                    priceRange?.max !== undefined &&
+                    step > priceRange.min &&
                     step < priceRange.max;
-                  
+
                   return (
                     <button
                       key={step}
@@ -155,7 +174,10 @@ function FiltersBottomSheet({ onApplyFilters }: FiltersBottomSheetProps) {
                           setPriceRange(undefined);
                         } else if (isMax) {
                           // If clicking max, only keep min
-                          setPriceRange({ min: priceRange!.min, max: priceRange!.min });
+                          setPriceRange({
+                            min: priceRange!.min,
+                            max: priceRange!.min,
+                          });
                         } else if (!priceRange?.min) {
                           // If no min set, set both min and max to this value
                           setPriceRange({ min: step, max: step });
@@ -168,13 +190,13 @@ function FiltersBottomSheet({ onApplyFilters }: FiltersBottomSheetProps) {
                         }
                       }}
                       className={`py-2 px-1 rounded-lg text-xs font-medium transition-all ${
-                        isMin 
-                          ? 'bg-primary text-black'
+                        isMin
+                          ? "bg-primary text-black"
                           : isMax
-                            ? 'bg-primary text-black'
-                            : isInRange
-                              ? 'bg-primary/30 text-white'
-                              : 'bg-gray-800/50 hover:bg-gray-700'
+                          ? "bg-primary text-black"
+                          : isInRange
+                          ? "bg-primary/30 text-white"
+                          : "bg-gray-800/50 hover:bg-gray-700"
                       }`}
                     >
                       ${step}M
@@ -194,11 +216,17 @@ function FiltersBottomSheet({ onApplyFilters }: FiltersBottomSheetProps) {
                 {sortOptions.map((sortOption) => (
                   <button
                     key={sortOption.value}
-                    onClick={() => setSort(sort?.value === sortOption.value ? undefined : sortOption)}
+                    onClick={() =>
+                      setSort(
+                        sort?.value === sortOption.value
+                          ? undefined
+                          : sortOption
+                      )
+                    }
                     className={`py-2 px-3 rounded-lg text-xs font-medium text-left transition-all ${
                       sort?.value === sortOption.value
-                        ? 'bg-primary text-black'
-                        : 'bg-gray-800/50 hover:bg-gray-700'
+                        ? "bg-primary text-black"
+                        : "bg-gray-800/50 hover:bg-gray-700"
                     }`}
                   >
                     {sortOption.label}

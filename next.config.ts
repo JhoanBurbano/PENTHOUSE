@@ -15,7 +15,12 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'burbanostudio-assets.s3.amazonaws.com'
-      }
+      },
+      {
+        protocol: 'https',
+        hostname: '*',
+        pathname: '**',
+      },
     ],
   },
 };

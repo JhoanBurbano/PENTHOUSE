@@ -1,8 +1,8 @@
-export interface IOwner {
-    idOwner: string;
+export interface Owner {
+    id: string;
     name: string;
     address: string;
-    emailAddress: string;
+    email_address: string;
     photo: string;
     birthday: string;
 }

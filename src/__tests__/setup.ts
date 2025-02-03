@@ -4,7 +4,7 @@ import { configure } from '@testing-library/react';
 // Mock Next.js components and hooks
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: function MockImage(props: any) {
+  default: function MockImage() {
     return 'Mock Image';
   },
 }));

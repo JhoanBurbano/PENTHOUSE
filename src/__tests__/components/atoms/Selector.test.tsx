@@ -82,7 +82,13 @@ describe('Selector Component', () => {
     
     fireEvent.click(screen.getByRole('button', { name: /test label/i }));
     
-    const optionsContainer = screen.getByRole('button', { name: /option 1/i });
+    const optionsContainer = screen.getAllByRole('button').find(
+      button => button.querySelector('p')?.textContent?.includes('Option 1') && button.classList.contains('bg-primary')
+    );
+    
+    if (!optionsContainer) throw new Error('Option button not found');
+    
+    mockSetValue.mockClear(); // Clear previous calls
     fireEvent.click(optionsContainer);
     
     expect(mockSetValue).toHaveBeenCalledWith(undefined);
@@ -93,7 +99,12 @@ describe('Selector Component', () => {
     
     fireEvent.click(screen.getByRole('button', { name: /test label/i }));
     
-    const optionsContainer = screen.getByRole('button', { name: /option 1/i });
+    const optionsContainer = screen.getAllByRole('button').find(
+      button => button.textContent?.includes('Option 1') && button.classList.contains('bg-primary')
+    );
+    
+    if (!optionsContainer) throw new Error('Option button not found');
+    
     expect(optionsContainer).toHaveClass('bg-primary');
   });
 

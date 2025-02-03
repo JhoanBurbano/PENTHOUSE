@@ -82,6 +82,12 @@ const PropertyGrid: React.FC<{
             lenght={property.amenities.length}
             beds={property.amenities.beds}
             baths={property.amenities.baths}
+            cardOwner={{
+              id: property?.owner?.id,
+              name: property?.owner?.name,
+              address: property?.owner?.email_address,
+              photo: property?.owner?.photo,
+            }}
           />
         </motion.div>
       ))}

@@ -1,97 +1,104 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
 import PropertyCard from '@/components/molecules/PropertyCard';
-import propertiesReducer from '@/redux/slices/propertiesSlice';
+
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (_props: unknown) => {
+    return 'Mock Image';
+  },
+}));
 
 describe('PropertyCard Component', () => {
-  const mockProperty = {
-    id: '1',
-    name: 'Luxury Penthouse',
-    location: ['New York', 'Manhattan'],
+  const mockProps = {
+    title: 'Luxury Penthouse',
+    address: '123 Luxury Ave, New York',
     price: 5000000,
-    address: '123 Luxury Ave',
-    owner: {
+    imageUrl: 'property.jpg',
+    badgeText: '2024',
+    onViewDetails: jest.fn(),
+    beds: 4,
+    baths: 3,
+    lenght: 2500,
+    cardOwner: {
+      id: '1',
       name: 'John Doe',
-      email_address: 'john@example.com',
+      address: '123 Main St',
       photo: 'owner.jpg',
-    },
-    image: 'property.jpg',
-    year: 2024,
-    amenities: {
-      bedrooms: 4,
-      bathrooms: 3,
-      area: 2500,
-      parking: 2,
     },
   };
 
-  const store = configureStore({
-    reducer: {
-      properties: propertiesReducer,
-    },
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
   const setup = (props = {}) => {
     return render(
-      <Provider store={store}>
-        <PropertyCard property={mockProperty} {...props} />
-      </Provider>
+      <PropertyCard {...mockProps} {...props} />
     );
   };
 
   it('renders property information correctly', () => {
     setup();
-    expect(screen.getByText(mockProperty.name)).toBeInTheDocument();
-    expect(screen.getByText(`$${mockProperty.price.toLocaleString()}`)).toBeInTheDocument();
-    expect(screen.getByText(mockProperty.location[0])).toBeInTheDocument();
-  });
-
-  it('renders property image with correct attributes', () => {
-    setup();
-    const image = screen.getByAltText(mockProperty.name);
-    expect(image).toHaveAttribute('src', expect.stringContaining(mockProperty.image));
-  });
-
-  it('renders amenities badges', () => {
-    setup();
-    expect(screen.getByText(`${mockProperty.amenities.bedrooms} Bedrooms`)).toBeInTheDocument();
-    expect(screen.getByText(`${mockProperty.amenities.bathrooms} Bathrooms`)).toBeInTheDocument();
-    expect(screen.getByText(`${mockProperty.amenities.area} sqft`)).toBeInTheDocument();
-  });
-
-  it('handles click events', () => {
-    const mockOnClick = jest.fn();
-    setup({ onClick: mockOnClick });
-    
-    fireEvent.click(screen.getByRole('article'));
-    expect(mockOnClick).toHaveBeenCalledTimes(1);
-  });
-
-  it('applies hover animations', () => {
-    setup();
-    const card = screen.getByRole('article');
-    expect(card).toHaveClass('hover:scale-[1.02]');
-  });
-
-  it('formats price correctly', () => {
-    setup();
-    const formattedPrice = `$${mockProperty.price.toLocaleString()}`;
-    expect(screen.getByText(formattedPrice)).toBeInTheDocument();
-  });
-
-  it('displays location badges correctly', () => {
-    setup();
-    mockProperty.location.forEach(location => {
-      expect(screen.getByText(location)).toBeInTheDocument();
+    const titleElement = screen.getByText((content, element) => {
+      return element?.tagName.toLowerCase() === 'p' && 
+             content.includes('Luxury Penthouse');
     });
+    expect(titleElement).toBeInTheDocument();
+    expect(screen.getByText(/123 Luxury Ave, New York/i)).toBeInTheDocument();
+    expect(screen.getByText('5.0M')).toBeInTheDocument();
   });
 
-  it('applies shadow and border styles', () => {
+  it('renders property image', () => {
     setup();
-    const card = screen.getByRole('article');
-    expect(card).toHaveClass('shadow-lg');
-    expect(card).toHaveClass('rounded-2xl');
+    const images = screen.getAllByText('Mock Image');
+    expect(images.length).toBeGreaterThan(0);
+  });
+
+  it('renders amenities information', () => {
+    setup();
+    const bedElements = screen.queryAllByText((_content, element) => {
+      const parent = element?.parentElement?.parentElement;
+      return parent?.textContent?.includes('4') && parent?.textContent?.includes('bed');
+    });
+    const bathElements = screen.queryAllByText((_content, element) => {
+      const parent = element?.parentElement?.parentElement;
+      return parent?.textContent?.includes('3') && parent?.textContent?.includes('bath');
+    });
+    const lengthElements = screen.queryAllByText((_content, element) => {
+      const parent = element?.parentElement?.parentElement;
+      return parent?.textContent?.includes('2500') && parent?.textContent?.includes('sqft');
+    });
+    expect(bedElements.length).toBeGreaterThan(0);
+    expect(bathElements.length).toBeGreaterThan(0);
+    expect(lengthElements.length).toBeGreaterThan(0);
+  });
+
+  it('handles view details click', () => {
+    setup();
+    fireEvent.click(screen.getByRole('article'));
+    expect(mockProps.onViewDetails).toHaveBeenCalledTimes(1);
+  });
+
+  it('displays badge text when provided', () => {
+    setup();
+    const titleElement = screen.getByText((content, element) => {
+      return element?.tagName.toLowerCase() === 'p' && 
+             content.includes('2024');
+    });
+    expect(titleElement).toBeInTheDocument();
+  });
+
+  it('renders owner information', () => {
+    setup();
+    expect(screen.getByText(mockProps.cardOwner.name)).toBeInTheDocument();
+    expect(screen.getByText(mockProps.cardOwner.address)).toBeInTheDocument();
+  });
+
+  it('handles missing image gracefully', () => {
+    const propsWithoutImage = { ...mockProps, imageUrl: '' };
+    setup(propsWithoutImage);
+    expect(screen.getByText('No Image')).toBeInTheDocument();
   });
 });

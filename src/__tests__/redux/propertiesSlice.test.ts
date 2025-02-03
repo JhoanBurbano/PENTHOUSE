@@ -4,9 +4,10 @@ import propertiesReducer, {
   setSelectedProperty,
 } from '@/redux/slices/propertiesSlice';
 import { Property } from '@/types/Property';
+import { RootState } from '@/redux/store';
 
 describe('Properties Slice', () => {
-  let store: any;
+  let store: ReturnType<typeof configureStore<RootState>>;
 
   beforeEach(() => {
     store = configureStore({
@@ -26,30 +27,8 @@ describe('Properties Slice', () => {
     });
   });
 
-  it('should handle setSelectedProperty', () => {
-    const mockProperty = {
-      id: '1',
-      name: 'Test Property',
-      location: ['Test Location'],
-      price: 1000000,
-      address: 'Test Address',
-      owner: {
-        name: 'Test Owner',
-        email_address: 'test@example.com',
-        photo: 'test.jpg',
-      },
-      image: 'test.jpg',
-      year: 2024,
-      amenities: {},
-    };
-
-    store.dispatch(setSelectedProperty(mockProperty));
-    const state = store.getState().properties;
-    expect(state.selectedProperty).toEqual(mockProperty);
-  });
-
   it('should handle fetchProperties.pending', () => {
-    store.dispatch(fetchProperties.pending());
+    store.dispatch(fetchProperties.pending('', {}));
     const state = store.getState().properties;
     expect(state.loading).toBe(true);
     expect(state.error).toBe(null);
@@ -69,6 +48,9 @@ describe('Properties Slice', () => {
           name: 'Test Owner',
           email_address: 'test@example.com',
           photo: 'test.jpg',
+          id: 'test',
+          address: 'test',
+          birthday: 'test',
         },
         image: 'test.jpg',
         images: ['test.jpg'],
@@ -85,9 +67,9 @@ describe('Properties Slice', () => {
 
     store.dispatch(fetchProperties.fulfilled(mockProperties, '', undefined));
     const state = store.getState().properties;
-    expect(state.properties).toEqual(mockProperties);
     expect(state.loading).toBe(false);
     expect(state.error).toBe(null);
+    expect(state.properties).toEqual(mockProperties);
   });
 
   it('should handle fetchProperties.rejected', () => {
@@ -96,5 +78,43 @@ describe('Properties Slice', () => {
     const state = store.getState().properties;
     expect(state.loading).toBe(false);
     expect(state.error).toBe(error.message);
+  });
+
+  it('should handle setSelectedProperty', async () => {
+    const mockProperty: Property = {
+      id: '1',
+      name: 'Test Property',
+      price: 1000000,
+      address: {
+        addressText: 'Test Address',
+        location: ['Test Location'],
+      },
+      owner: {
+        name: 'Test Owner',
+        email_address: 'test@example.com',
+        photo: 'test.jpg',
+        id: 'test',
+        address: 'test',
+        birthday: 'test',
+      },
+      image: 'test.jpg',
+      images: ['test.jpg'],
+      year: 2024,
+      amenities: {
+        beds: 2,
+        baths: 1,
+        length: 1000,
+        garage: 1,
+      },
+      traces: [],
+    };
+    
+    // Luego la seleccionamos usando el thunk
+    await store.dispatch(setSelectedProperty.fulfilled(mockProperty, '', mockProperty.id));
+    
+    const state = store.getState().properties;
+    expect(state.selectedProperty).toEqual(mockProperty);
+    expect(state.loading).toBe(false);
+    expect(state.error).toBe(null);
   });
 });

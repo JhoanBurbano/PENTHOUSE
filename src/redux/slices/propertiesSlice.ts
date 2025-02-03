@@ -3,18 +3,20 @@ import axiosClient from '../../utils/axiosClient';
 import { Property } from '../../types/Property';
 import { AxiosError } from 'axios';
 import { ErrorResponse } from '@/types/ErrorResponse';
-import { getProperties } from '@/services/property.service';
+import { getProperties, getProperty } from '@/services/property.service';
 import { QuerySearchProperties } from '@/types/Filters';
 
 interface PropertiesState {
   properties: Property[];
+  selectedProperty: Property | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: PropertiesState = {
   properties: [],
-  loading: true,
+  selectedProperty: null,
+  loading: false,
   error: null,
 };
 
@@ -27,6 +29,19 @@ export const fetchProperties = createAsyncThunk(
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue((error as AxiosError<ErrorResponse>).response?.data?.message || 'Failed to fetch properties');
+    }
+  }
+);
+
+// Set a selected property
+export const setSelectedProperty = createAsyncThunk(
+  'properties/setSelectedProperty',
+  async (id: string, thunkAPI) => {
+    try {
+      const response = await getProperty(id);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue((error as AxiosError<ErrorResponse>).response?.data?.message || 'Failed to set selected property');
     }
   }
 );
@@ -74,6 +89,12 @@ const propertiesSlice = createSlice({
       })
       .addCase(fetchProperties.rejected, (state, action) => {
         state.loading = false;
+        state.error =action.error.message || action.payload as string;
+      })
+      .addCase(setSelectedProperty.fulfilled, (state, action) => {
+        state.selectedProperty = action.payload;
+      })
+      .addCase(setSelectedProperty.rejected, (state, action) => {
         state.error = action.payload as string;
       })
       .addCase(createProperty.fulfilled, (state, action) => {

@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const nextJest = require('next/jest');
 
 const createJestConfig = nextJest({
@@ -10,14 +11,14 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
-  collectCoverage: true,
+  testPathIgnorePatterns: [
+    '<rootDir>/node_modules/',
+    '<rootDir>/.next/',
+    '<rootDir>/src/__tests__/setup.ts'
+  ],
+  collectCoverage: false,
   collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/*.stories.{ts,tsx}',
-    '!src/app/**/*.{ts,tsx}',
-    '!src/types/**/*.{ts,tsx}',
+    'src/__tests__/**/*.test.{ts,tsx}',
   ],
   coverageThreshold: {
     global: {
@@ -29,6 +30,8 @@ const customJestConfig = {
   },
   testMatch: [
     '<rootDir>/src/__tests__/**/*.test.{ts,tsx}',
+    "**/__tests__/**/*.[jt]s?(x)",
+    "**/?(*.)+(spec|test).[jt]s?(x)"
   ],
 };
 

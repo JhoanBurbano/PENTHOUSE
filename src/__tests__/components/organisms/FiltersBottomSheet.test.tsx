@@ -20,23 +20,24 @@ describe('FiltersBottomSheet Component', () => {
 
   it('opens and closes the sheet', () => {
     render(<FiltersBottomSheet onApplyFilters={mockOnApplyFilters} />);
-    
+  
     // Open sheet
-    fireEvent.click(screen.getByText('Show filters'));
-    expect(screen.getByText('Filters')).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('Show filters'));
+    const filtersSheet = screen.getByRole('main');
+    expect(filtersSheet).toHaveClass('translate-y-0');
     
     // Close sheet
-    fireEvent.click(screen.getByLabelText('Close menu'));
-    expect(screen.queryByText('Filters')).not.toBeVisible();
+    fireEvent.click(screen.getByTestId('Close menu'));
+    expect(filtersSheet).toHaveClass('translate-y-full');
   });
 
   it('locks body scroll when open', () => {
     render(<FiltersBottomSheet onApplyFilters={mockOnApplyFilters} />);
     
-    fireEvent.click(screen.getByText('Show filters'));
+    fireEvent.click(screen.getByTestId('Show filters'));
     expect(document.body.style.overflow).toBe('hidden');
     
-    fireEvent.click(screen.getByLabelText('Close menu'));
+    fireEvent.click(screen.getByTestId('Close menu'));
     expect(document.body.style.overflow).toBe('');
   });
 
@@ -119,7 +120,7 @@ describe('FiltersBottomSheet Component', () => {
     
     // Close sheet
     act(() => {
-      fireEvent.click(screen.getByLabelText('Close menu'));
+      fireEvent.click(screen.getByTestId('Close menu'));
     });
     
     expect(sheet).toHaveClass('translate-y-full');
